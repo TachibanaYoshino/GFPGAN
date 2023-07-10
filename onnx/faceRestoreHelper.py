@@ -3,12 +3,19 @@ import numpy as np
 import face_det
 import onnxruntime as ort
 
+device_name = ort.get_device()
+providers=None
+if device_name == 'CPU':
+    providers = ['CPUExecutionProvider']
+elif device_name == 'GPU':
+    providers = ['CUDAExecutionProvider', 'CPUExecutionProvider']
+
 onnx_path=r'./parsing_parsenet_sim.onnx'
 ort_sess_options = ort.SessionOptions()
 ort_sess_options.intra_op_num_threads = int(os.environ.get('ort_intra_op_num_threads', 0))
 pwd = os.path.abspath(os.path.dirname(__file__))
-print(pwd)
-ort_session = ort.InferenceSession(pwd + onnx_path, sess_options=ort_sess_options)
+
+ort_session = ort.InferenceSession(os.path.join(pwd, onnx_path), sess_options=ort_sess_options, providers=providers)
 
 def read_image(img):
     """img can be image path or cv2 loaded image."""

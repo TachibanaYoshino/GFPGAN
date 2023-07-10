@@ -14,11 +14,19 @@ except:
     from .retinaface_.py_cpu_nms import py_cpu_nms
     from .retinaface_.box_utils import decode, decode_landm
 
-facedet_model_path = "./detection_mobilenet0.25_Final.onnx"
+device_name = onnxruntime.get_device()
+providers=None
+if device_name == 'CPU':
+    providers = ['CPUExecutionProvider']
+elif device_name == 'GPU':
+    providers = ['CUDAExecutionProvider', 'CPUExecutionProvider']
+
+facedet_model_path = "detection_mobilenet0.25_Final.onnx"
 ort_sess_options = onnxruntime.SessionOptions()
 ort_sess_options.intra_op_num_threads = int(os.environ.get('ort_intra_op_num_threads', 0))
 pwd = os.path.abspath(os.path.dirname(__file__))
-ort_session = onnxruntime.InferenceSession(pwd+ facedet_model_path, sess_options=ort_sess_options)  # mobilenet
+
+ort_session = onnxruntime.InferenceSession(os.path.join(pwd, facedet_model_path), sess_options=ort_sess_options,providers=providers)  # mobilenet
 cfg = cfg_mnet
 
 
