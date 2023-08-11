@@ -13,7 +13,7 @@ providers=None
 if device_name == 'CPU':
     providers = ['CPUExecutionProvider']
 elif device_name == 'GPU':
-    providers = ['CUDAExecutionProvider', 'CPUExecutionProvider']
+    providers = ['CUDAExecutionProvider'] #, 'CPUExecutionProvider']
 
 class RealESRGANer():
     """A helper class for upsampling images with RealESRGAN.

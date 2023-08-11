@@ -15,7 +15,10 @@ Modify gfpgan/utils.py
 2. line 92-121, uncomment   
 3. Execute the following script.   
 ```
-python inference_gfpgan.py   
+# for video    
+python inference_gfpgan.py   --input xxx.mp4 --output results --realesrgan realesrgan
+# for images 
+python inference_gfpgan.py   --input path_to_iamges --output results --realesrgan realesrgan
 ```
 
 ## Run onnx demo.

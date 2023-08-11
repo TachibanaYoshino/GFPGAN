@@ -4,12 +4,12 @@ import onnxruntime
 from PIL import Image, ImageDraw
 import numpy as np
 try:
-    from retinaface_ import cfg_mnet
+    from retinaface_ import cfg_mnet, cfg_re50
     from retinaface_.prior_box import PriorBox
     from retinaface_.py_cpu_nms import py_cpu_nms
     from retinaface_.box_utils import decode, decode_landm
 except:
-    from .retinaface_ import cfg_mnet
+    from .retinaface_ import cfg_mnet, cfg_re50
     from .retinaface_.prior_box import PriorBox
     from .retinaface_.py_cpu_nms import py_cpu_nms
     from .retinaface_.box_utils import decode, decode_landm
@@ -19,15 +19,15 @@ providers=None
 if device_name == 'CPU':
     providers = ['CPUExecutionProvider']
 elif device_name == 'GPU':
-    providers = ['CUDAExecutionProvider', 'CPUExecutionProvider']
+    providers = ['CUDAExecutionProvider']
 
-facedet_model_path = "detection_mobilenet0.25_Final.onnx"
+facedet_model_path = "Resnet50_Final.onnx"
 ort_sess_options = onnxruntime.SessionOptions()
 ort_sess_options.intra_op_num_threads = int(os.environ.get('ort_intra_op_num_threads', 0))
 pwd = os.path.abspath(os.path.dirname(__file__))
 
 ort_session = onnxruntime.InferenceSession(os.path.join(pwd, facedet_model_path), sess_options=ort_sess_options,providers=providers)  # mobilenet
-cfg = cfg_mnet
+cfg = cfg_re50 # cfg_mnet
 
 
 

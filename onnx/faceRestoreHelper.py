@@ -2,13 +2,14 @@ import cv2,os
 import numpy as np
 import face_det
 import onnxruntime as ort
+from PIL import Image
 
 device_name = ort.get_device()
 providers=None
 if device_name == 'CPU':
     providers = ['CPUExecutionProvider']
 elif device_name == 'GPU':
-    providers = ['CUDAExecutionProvider', 'CPUExecutionProvider']
+    providers = ['CUDAExecutionProvider' ]#, 'CPUExecutionProvider']
 
 onnx_path=r'./parsing_parsenet_sim.onnx'
 ort_sess_options = ort.SessionOptions()
@@ -16,6 +17,11 @@ ort_sess_options.intra_op_num_threads = int(os.environ.get('ort_intra_op_num_thr
 pwd = os.path.abspath(os.path.dirname(__file__))
 
 ort_session = ort.InferenceSession(os.path.join(pwd, onnx_path), sess_options=ort_sess_options, providers=providers)
+
+def icv_resize(mat, size):
+    img = Image.fromarray(mat)
+    img = img.resize(size, Image.ANTIALIAS)
+    return np.array(img)
 
 def read_image(img):
     """img can be image path or cv2 loaded image."""
@@ -113,7 +119,7 @@ def paste_faces_to_image(img, restored_faces, inverse_affine_matrices,upscale_fa
 
         if use_parse:
             # inference
-            face_input = cv2.resize(restored_face, (512, 512), interpolation=cv2.INTER_LINEAR)
+            face_input = icv_resize(restored_face, (512, 512))
             face_input = preprocess(face_input)
             out = face_parse(face_input)
             out = np.argmax(out, axis=1).squeeze()
@@ -133,7 +139,7 @@ def paste_faces_to_image(img, restored_faces, inverse_affine_matrices,upscale_fa
             mask[:, -thres:] = 0
             mask = mask / 255.
 
-            mask = cv2.resize(mask, restored_face.shape[:2])
+            mask = icv_resize(mask, restored_face.shape[:2])
             mask = cv2.warpAffine(mask, inverse_affine, (w, h), flags=3)
             inv_soft_mask = mask[:, :, None]
             pasted_face = inv_restored
