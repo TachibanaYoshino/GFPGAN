@@ -15,15 +15,15 @@ Modify gfpgan/utils.py
 2. line 92-121, uncomment   
 3. Execute the following script.   
 ```
-# for video    
-python inference_gfpgan.py   --input xxx.mp4 --output results --realesrgan realesrgan
-# for images 
-python inference_gfpgan.py   --input path_to_iamges --output results --realesrgan realesrgan
+python inference_gfpgan.py   
 ```
 
 ## Run onnx demo.
 ```
-python onnx_infer.py  --image_path ../inputs/whole_imgs --output results
+# for video    
+python onnx_infer.py   --input xxx.mp4 --output results --realesrgan realesrgan
+# for images 
+python onnx_infer.py   --input path_to_iamges --output results --realesrgan realesrgan
 ```
 
 Input | torch output | onnx output
